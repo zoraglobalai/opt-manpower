@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #1F2937;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-7 py-3.5 bg-black text-white font-heading font-semibold text-sm rounded-none tracking-wide transition-all duration-300 hover:bg-gray-800 hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)];
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-7 py-3.5 border-2 border-black text-black font-heading font-semibold text-sm rounded-none tracking-wide transition-all duration-300 hover:bg-black hover:text-white;
+  }
+
+  .btn-dark {
+    @apply inline-flex items-center gap-2 px-7 py-3.5 bg-gray-100 text-black font-heading font-semibold text-sm rounded-none tracking-wide transition-all duration-300 hover:bg-gray-200;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white border border-gray-300 transition-all duration-300 hover:border-black hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)];
+  }
+
+  /* Section Title */
+  .section-tag {
+    @apply text-black text-xs font-display font-bold tracking-[0.35em] uppercase;
+  }
+
+  .section-title {
+    @apply font-display font-bold text-3xl md:text-4xl lg:text-5xl text-black leading-tight;
+  }
+
+  /* Inputs */
+  .input-field {
+    @apply w-full bg-white border border-gray-300 text-black placeholder-gray-400 px-4 py-3 text-sm font-body focus:outline-none focus:border-black transition-colors duration-200;
+  }
+
+  /* Divider line accent */
+  .accent-line {
+    @apply w-12 h-1 bg-black;
+  }
+
+  /* Status badge */
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 text-xs font-display font-semibold tracking-wide rounded-full;
+  }
+
+  /* Glass overlay */
+  .glass {
+    @apply bg-white/90 backdrop-blur-sm border border-gray-300;
+  }
+
+  /* Silver glow effect - text only */
+  .silver-glow {
+    @apply transition-all duration-300;
+  }
+
+  .silver-glow:hover {
+    text-shadow: 0 0 8px rgba(192, 192, 192, 0.8);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F4F6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #333333;
+}

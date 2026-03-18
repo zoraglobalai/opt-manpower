@@ -1,0 +1,20 @@
+# Nginx logs and cache
+*.log
+access.log
+error.log
+cache/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+*~
+.tmp/
