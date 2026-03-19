@@ -4,6 +4,17 @@ import { ArrowRight, CheckCircle, Users, Globe, Layers, Cpu, Award, TrendingUp, 
 import { contentAPI } from '../services/api';
 import AuthModal from '../components/AuthModal';
 
+// Hero Background
+import heroBg from '../asserts/Emp-Bg.webp';
+
+// Solutions Images
+import generalStaffingImg from '../asserts/General-Staffing.webp';
+import professionalStaffingImg from '../asserts/Professional-Staffing.webp';
+import permanentRecruitmentImg from '../asserts/Permanent-Recruitment.webp';
+import executiveSearchImg from '../asserts/Executive-Search.webp';
+import internationalRecruitmentImg from '../asserts/International-Recruitment.webp';
+import contractStaffingImg from '../asserts/Contract-Staffing.webp';
+
 const STATS = [
   { label: 'Talent in Pool', value: '10,000+', icon: Users },
   { label: 'Client Companies', value: '500+', icon: Building2 },
@@ -12,12 +23,12 @@ const STATS = [
 ];
 
 const SOLUTIONS_WITH_IMAGES: Record<string, string> = {
-  'General Staffing': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop',
-  'Professional Staffing': 'https://images.unsplash.com/photo-1552664720-d5b51b953ec1?w=400&h=300&fit=crop',
-  'Permanent Recruitment': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop',
-  'Executive Search': 'https://images.unsplash.com/photo-1552664720-d5b51b953ec1?w=400&h=300&fit=crop',
-  'International Recruitment': 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop',
-  'Contract Staffing': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop',
+  'General Staffing': generalStaffingImg,
+  'Professional Staffing': professionalStaffingImg,
+  'Permanent Recruitment': permanentRecruitmentImg,
+  'Executive Search': executiveSearchImg,
+  'International Recruitment': internationalRecruitmentImg,
+  'Contract Staffing': contractStaffingImg,
 };
 
 const SOLUTIONS = [
@@ -67,7 +78,7 @@ const EmployerHome = () => {
       <section className="relative min-h-[95vh] flex items-center pt-32 overflow-hidden">
         {/* Gradient Background */}
         <div className="absolute inset-0 z-0">
-          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600&q=80&auto=format&fit=crop" alt="Business team" className="w-full h-full object-cover opacity-12" />
+          <img src={heroBg} alt="Business team" className="w-full h-full object-cover opacity-12" />
           <div className="absolute inset-0 bg-gradient-to-br from-white via-white/98 to-gray-50/30" />
           <div className="absolute top-0 right-0 w-96 h-96 bg-black/3 rounded-full -mr-48 -mt-48" />
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/2 rounded-full -ml-40 -mb-40" />

@@ -78,6 +78,41 @@ body {
   .silver-glow:hover {
     text-shadow: 0 0 8px rgba(192, 192, 192, 0.8);
   }
+
+  /* Premium Gradient Text */
+  .text-gradient {
+    @apply text-transparent bg-clip-text;
+  }
+
+  /* Premium Button Styles */
+  .btn-premium {
+    @apply relative px-8 py-4 font-bold rounded-full transition-all duration-300 overflow-hidden;
+  }
+
+  .btn-premium-gradient {
+    @apply btn-premium bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40 active:scale-95;
+  }
+
+  /* Premium card styling */
+  .card-premium {
+    @apply bg-white border-2 border-slate-200 rounded-2xl transition-all duration-300 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/10;
+  }
+
+  /* Smooth gradient background */
+  .bg-premium {
+    @apply bg-gradient-to-br from-slate-50 via-white to-blue-50/30;
+  }
+
+  /* Premium badge */
+  .badge-premium {
+    @apply inline-flex items-center gap-2 px-6 py-2.5 rounded-full backdrop-blur-sm shadow-lg;
+  }
+
+  /* Text shadow for premium look */
+  .text-premium {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
 }
 
 /* Custom scrollbar */

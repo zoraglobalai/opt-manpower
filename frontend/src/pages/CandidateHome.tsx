@@ -5,6 +5,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Star, Users, Globe, TrendingUp, Search, MapPin, Briefcase, Award } from 'lucide-react';
 import { contentAPI, jobsAPI } from '../services/api';
 import JobCard from '../components/JobCard';
+// Sector Images (LOCAL)
+import itImg from '../asserts/IT&Technology.webp';
+import healthcareImg from '../asserts/Healthcare.webp';
+import engineeringImg from '../asserts/Engineering.webp';
+import financeImg from '../asserts/Finance&Banking.webp';
+import salesImg from '../asserts/Sales&Marketing.webp';
+import hospitalityImg from '../asserts/Hospitality.webp';
+import constructionImg from '../asserts/Construction.webp';
+import logisticsImg from '../asserts/Logistics.webp';
+
+// Why Choose Us Images
+import precisionImg from '../asserts/Precision-Role-Matching.webp';
+import consultancyImg from '../asserts/Expert-Consultancy.webp';
+import strategyImg from '../asserts/Long-Term-Career-Strategy.webp';
+import partnersImg from '../asserts/VettedGlobalPartners.webp';
 
 const STATS = [
   { label: 'Placements Made', value: '10,000+', icon: Users },
@@ -19,14 +34,14 @@ const SECTORS = [
 ];
 
 const SECTOR_IMAGES: Record<string, string> = {
-  'IT & Technology': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop',
-  'Healthcare': 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&h=300&fit=crop',
-  'Engineering': 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=300&fit=crop',
-  'Finance & Banking': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop',
-  'Sales & Marketing': 'https://images.unsplash.com/photo-1552664720-d5b51b953ec1?w=400&h=300&fit=crop',
-  'Hospitality': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop',
-  'Construction': 'https://images.unsplash.com/photo-1581091918492-8ff080ef2580?w=400&h=300&fit=crop',
-  'Logistics': 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400&h=300&fit=crop',
+  'IT & Technology': itImg,
+  'Healthcare': healthcareImg,
+  'Engineering': engineeringImg,
+  'Finance & Banking': financeImg,
+  'Sales & Marketing': salesImg,
+  'Hospitality': hospitalityImg,
+  'Construction': constructionImg,
+  'Logistics': logisticsImg,
 };
 
 const CandidateHome = () => {
@@ -211,25 +226,25 @@ const CandidateHome = () => {
                   title: 'Precision Role Matching',
                   desc: 'We map your distinct skills and preferences against highly relevant, verified vacancies to secure the ideal cultural and professional fit.',
                   icon: Search,
-                  image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=600&fit=crop',
+                  image: precisionImg,
                 },
                 {
                   title: 'Expert Consultancy',
                   desc: 'Our seasoned recruiters act as your dedicated advocates, comprehensively preparing you for interviews and negotiating optimal compensations.',
                   icon: Users,
-                  image: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=800&h=600&fit=crop',
+                  image: consultancyImg,
                 },
                 {
                   title: 'Long-Term Career Strategy',
                   desc: 'We prioritize roles that foster sustainable value, providing you with continuous insights for upskilling and career transitions.',
                   icon: TrendingUp,
-                  image: 'https://images.unsplash.com/photo-1515169067865-5387ec356754?w=800&h=600&fit=crop',
+                  image: strategyImg,
                 },
                 {
                   title: 'Vetted Global Partners',
                   desc: 'We strictly collaborate with reputable employers renowned for their credibility, inclusive cultures, and accelerated growth potential.',
                   icon: Award,
-                  image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop',
+                  image: partnersImg,
                 },
               ].map((item) => (
                 <motion.div

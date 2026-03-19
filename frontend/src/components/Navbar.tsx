@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Menu, X, ChevronDown, Briefcase, User, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useMode } from '../context/ModeContext';
-import LogoImage from '../asserts/opt-man-logo.png';
+import LogoImage from '../asserts/opt-man-logo.webp';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
