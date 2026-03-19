@@ -144,13 +144,13 @@ const Navbar = () => {
             </button>
             {isAdmin ? (
               <div className="flex items-center gap-3">
-                <Link to="/admin" className="text-sm font-body text-white">Admin Panel</Link>
+                <a href="/admin" target="_blank" rel="noopener noreferrer" className="text-sm font-body text-white hover:text-gray-300 transition-colors">Admin Panel</a>
                 <button onClick={logout} className="btn-outline text-xs py-2 px-5">Logout</button>
               </div>
             ) : (
-              <Link to="/admin" className="flex items-center gap-1.5 text-xs font-body font-semibold text-gray-300 border border-gray-600 hover:border-gray-400 hover:text-white px-3 py-1.5 transition-all duration-200">
+              <a href="/admin" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs font-body font-semibold text-gray-300 border border-gray-600 hover:border-gray-400 hover:text-white px-3 py-1.5 transition-all duration-200">
                 <ShieldCheck className="w-3.5 h-3.5" /> Admin Login
-              </Link>
+              </a>
             )}
           </div>
 

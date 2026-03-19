@@ -41,6 +41,7 @@ const JobDetails = () => {
     previous_company: '',
     role: '',
   });
+  const [experienceSelected, setExperienceSelected] = useState(false);
 
   const { data, isLoading } = useQuery({ queryKey: ['job', id], queryFn: () => jobsAPI.detail(id!) });
   
@@ -85,19 +86,32 @@ const JobDetails = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate mandatory fields
+    if (!form.name.trim()) { setError('Full Name is required.'); return; }
+    if (!form.email.trim()) { setError('Email is required.'); return; }
+    if (!form.phone.trim()) { setError('Phone Number is required.'); return; }
+    if (!/^[6-9]\d{9}$/.test(form.phone)) { setError('Phone Number must be valid (10 digits, starting with 6-9).'); return; }
+    if (!form.qualification.trim()) { setError('Highest Qualification is required.'); return; }
+    if (!experienceSelected) { setError('Please select whether you are a Fresher or Experienced.'); return; }
+    if (form.is_experienced && !form.years_of_experience) { setError('Total Experience is required for experienced candidates.'); return; }
+    if (form.is_experienced && !form.previous_company.trim()) { setError('Current/Previous Company is required for experienced candidates.'); return; }
+    if (form.is_experienced && !form.role.trim()) { setError('Current Role/Position is required for experienced candidates.'); return; }
     if (!cvFile) { setError('Please upload your CV / Resume.'); return; }
+    
     setSubmitting(true); setError('');
     try {
       const fd = new FormData();
       fd.append('job', id!);
       fd.append('resume', cvFile);
       
-      // Append form fields
+      // Append form fields - map 'name' to 'full_name'
       Object.entries(form).forEach(([k, v]) => {
+        const key = k === 'name' ? 'full_name' : k;
         if (typeof v === 'boolean') {
-           fd.append(k, v ? 'True' : 'False');
+           fd.append(key, v ? 'True' : 'False');
         } else {
-           fd.append(k, v);
+           fd.append(key, v);
         }
       });
       
@@ -108,6 +122,7 @@ const JobDetails = () => {
         years_of_experience: '', previous_company: '', role: ''
       });
       setCvFile(null);
+      setExperienceSelected(false);
     } catch (err: any) {
       const detail = err.response?.data?.detail || err.response?.data?.non_field_errors?.[0];
       if (detail?.toLowerCase().includes('already exists')) {
@@ -291,14 +306,23 @@ const JobDetails = () => {
 
                       <div className="mb-3 flex gap-4">
                         <label className="flex items-center gap-2 text-sm font-body text-gray-medium cursor-pointer">
-                          <input type="radio" value="false" checked={!form.is_experienced} onChange={() => setForm({ ...form, is_experienced: false })} />
+                          <input 
+                            type="radio" 
+                            checked={!form.is_experienced && experienceSelected} 
+                            onChange={() => { setForm({ ...form, is_experienced: false }); setExperienceSelected(true); }} 
+                          />
                           Fresher
                         </label>
                         <label className="flex items-center gap-2 text-sm font-body text-gray-medium cursor-pointer">
-                          <input type="radio" value="true" checked={form.is_experienced} onChange={() => setForm({ ...form, is_experienced: true })} />
+                          <input 
+                            type="radio" 
+                            checked={form.is_experienced && experienceSelected} 
+                            onChange={() => { setForm({ ...form, is_experienced: true }); setExperienceSelected(true); }} 
+                          />
                           Experienced
                         </label>
                       </div>
+                      {!experienceSelected && <p className="text-red-400 text-xs font-body mb-2">Please select your experience level *</p>}
 
                       <AnimatePresence>
                         {form.is_experienced && (

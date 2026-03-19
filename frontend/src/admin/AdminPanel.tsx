@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -14,18 +14,16 @@ import { adminAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import AdminJobForm from './AdminJobForm';
 
-const ACCENT = '#000000';
-const CHART_COLORS = ['#000000', '#60a5fa', '#34d399', '#a78bfa', '#f87171', '#fb923c', '#38bdf8', '#4ade80'];
+const ACCENT = '#0ea5e9';
+const ACCENT_DARK = '#0284c7';
+const CHART_COLORS = ['#0ea5e9', '#06b6d4', '#10b981', '#8b5cf6', '#ec4899', '#f59e0b', '#ef4444', '#3b82f6'];
 
 // ── Sidebar ──────────────────────────────────────────────────────────────────
 const NAV = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Briefcase, label: 'Jobs', path: '/admin/jobs' },
   { icon: FileText, label: 'Applications', path: '/admin/applications' },
-  { icon: Users, label: 'Candidates', path: '/admin/candidates' },
-  { icon: Briefcase, label: 'Employers', path: '/admin/employers' },
   { icon: FileText, label: 'Enquiries', path: '/admin/enquiries' },
-  { icon: BarChart2, label: 'Analytics', path: '/admin/analytics' },
 ];
 
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => void }) => {
@@ -34,39 +32,42 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => vo
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/70 z-30 lg:hidden" onClick={() => setOpen(false)} />}
-      <aside className={`fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-light z-40 transition-transform duration-300
+      <aside className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-slate-900 to-slate-950 border-r border-slate-800 z-40 transition-transform duration-300
         ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-light">
-          <div className="w-7 h-7 bg-black flex items-center justify-center">
-            <Briefcase className="w-3.5 h-3.5 text-white" />
+        <div className="flex items-center gap-3 px-6 py-6 border-b border-slate-800">
+          <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center rounded-lg">
+            <Briefcase className="w-4 h-4 text-white" />
           </div>
           <div>
-            <p className="font-display font-black text-sm text-black tracking-tight">OPTIMUS</p>
-            <p className="text-gray-medium font-display font-light text-xs">ADMIN</p>
+            <p className="font-black text-sm text-white tracking-tight">OPTIMUS</p>
+            <p className="text-cyan-400 font-light text-xs">ADMIN</p>
           </div>
         </div>
-        <nav className="p-4 space-y-1 mt-2">
+        <nav className="p-4 space-y-2 mt-2">
           {NAV.map(({ icon: Icon, label, path }) => {
             const active = loc.pathname === path;
             return (
               <Link key={path} to={path} onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 text-sm font-body transition-all duration-150 ${active ? 'bg-black/10 text-black border-r-2 border-black' : 'text-gray-medium hover:text-black hover:bg-gray-50'
-                  }`}>
+                className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-200 rounded-lg ${
+                  active 
+                    ? 'bg-gradient-to-r from-cyan-500/30 to-blue-500/30 text-cyan-300 border-l-2 border-cyan-500' 
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                }`}>
                 <Icon className="w-4 h-4" /> {label}
               </Link>
             );
           })}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-light">
-          <div className="flex items-center gap-3 px-4 py-3">
-            <div className="w-8 h-8 bg-black/10 rounded-full flex items-center justify-center font-display font-bold text-black text-xs">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
+          <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/50 rounded-lg">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center font-black text-white text-xs">
               {user?.first_name?.[0] || 'A'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-black text-xs font-heading font-medium truncate">{user?.first_name} {user?.last_name}</p>
-              <p className="text-gray-medium text-xs font-body">Admin</p>
+              <p className="text-white text-xs font-semibold truncate">{user?.first_name} {user?.last_name}</p>
+              <p className="text-slate-400 text-xs">Admin</p>
             </div>
-            <button onClick={logout} className="text-gray-medium hover:text-red-500 transition-colors">
+            <button onClick={logout} className="text-slate-400 hover:text-red-400 transition-colors">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -78,8 +79,14 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (v: boolean) => vo
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery({ queryKey: ['admin-dashboard'], queryFn: adminAPI.getStats });
   const stats = data?.data;
+  
+  const notifyAdmin = (message: string) => {
+    // Send email notification to admin
+    console.log('Admin notification:', message);
+  };
 
   const STATUS_COLOR: Record<string, string> = {
     Applied: 'bg-blue-500/15 text-blue-400',
@@ -92,61 +99,99 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="font-display font-black text-2xl text-black">Dashboard</h1>
-        <p className="text-gray-medium text-sm font-body mt-1">Welcome back, Admin</p>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {[
-          { label: 'Total Jobs', value: stats?.total_jobs, icon: Briefcase, color: 'text-black' },
-          { label: 'Published Jobs', value: stats?.published_jobs, icon: TrendingUp, color: 'text-green-400' },
-          { label: 'Applications', value: stats?.total_applications, icon: FileText, color: 'text-blue-400' },
-          { label: 'Candidates', value: stats?.total_candidates, icon: Users, color: 'text-purple-400' },
-          { label: 'Employers', value: stats?.total_employers, icon: Briefcase, color: 'text-yellow-400' },
-          { label: 'Enquiries', value: stats?.total_enquiries, icon: FileText, color: 'text-pink-400' },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="card p-5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-gray-medium text-xs font-body mb-2">{label}</p>
-                <p className={`font-display font-black text-3xl ${color}`}>{isLoading ? '...' : (value ?? '—')}</p>
-              </div>
-              <Icon className={`w-5 h-5 ${color} opacity-50 mt-1`} />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-200 p-8 rounded-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-cyan-600 font-semibold text-sm uppercase tracking-widest mb-2">Administration Dashboard</p>
+              <h1 className="font-black text-4xl text-slate-900 mb-2">Welcome Back</h1>
+              <p className="text-slate-600 text-base">Manage jobs, applications, and business enquiries</p>
             </div>
           </div>
+        </div>
+      </motion.div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+        {[
+          { label: 'Total Jobs', value: stats?.total_jobs, icon: Briefcase, gradient: 'from-cyan-500 to-blue-600', path: '/admin/jobs' },
+          { label: 'Published Jobs', value: stats?.published_jobs, icon: TrendingUp, gradient: 'from-emerald-500 to-green-600', path: '/admin/jobs' },
+          { label: 'Applications', value: stats?.total_applications, icon: FileText, gradient: 'from-purple-500 to-pink-600', path: '/admin/applications' },
+          { label: 'Enquiries', value: stats?.total_enquiries, icon: Briefcase, gradient: 'from-orange-500 to-red-600', path: '/admin/enquiries' },
+        ].map(({ label, value, icon: Icon, gradient, path }) => (
+          <motion.button
+            key={label}
+            onClick={() => navigate(path)}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white border-2 border-slate-200 rounded-2xl p-6 hover:border-cyan-400 hover:shadow-xl transition-all duration-300 cursor-pointer text-left w-full"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-slate-500 text-sm font-semibold mb-2">{label}</p>
+                <p className={`font-black text-4xl bg-gradient-to-r ${gradient} text-transparent bg-clip-text`}>
+                  {isLoading ? '...' : (value ?? '—')}
+                </p>
+              </div>
+              <div className={`bg-gradient-to-br ${gradient} p-3 rounded-xl`}>
+                <Icon className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </motion.button>
         ))}
       </div>
 
-      <div className="card p-6">
-        <h2 className="font-heading font-semibold text-black text-sm mb-5">Recent Applications</h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="bg-white border-2 border-slate-200 rounded-2xl p-8"
+      >
+        <h2 className="font-black text-xl text-slate-900 mb-6">Recent Applications</h2>
         {stats?.recent_applications?.length ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left">
+                <tr className="text-left border-b-2 border-slate-200">
                   {['Applicant', 'Job', 'Status', 'Date'].map((h) => (
-                    <th key={h} className="pb-3 text-xs font-display text-gray-medium uppercase tracking-wide font-semibold">{h}</th>
+                    <th key={h} className="pb-4 px-4 text-xs font-black text-slate-700 uppercase tracking-widest">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-light">
-                {stats.recent_applications.map((app: any) => (
-                  <tr key={app.id}>
-                    <td className="py-3 font-body text-gray-dark text-xs">{app.full_name}</td>
-                    <td className="py-3 font-body text-gray-medium text-xs">{app.job_title}</td>
-                    <td className="py-3">
-                      <span className={`status-badge text-xs ${STATUS_COLOR[app.status] || 'bg-gray-100 text-gray-medium'}`}>{app.status}</span>
-                    </td>
-                    <td className="py-3 font-body text-gray-medium text-xs">{new Date(app.created_at).toLocaleDateString()}</td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-slate-100">
+                {stats.recent_applications.map((app: any) => {
+                  const statusColors: Record<string, string> = {
+                    Applied: 'bg-blue-100 text-blue-700',
+                    'Under Review': 'bg-yellow-100 text-yellow-700',
+                    Shortlisted: 'bg-green-100 text-green-700',
+                    'Interview Scheduled': 'bg-purple-100 text-purple-700',
+                    Rejected: 'bg-red-100 text-red-700',
+                    Hired: 'bg-emerald-100 text-emerald-700',
+                  };
+                  return (
+                    <tr key={app.id} className="hover:bg-cyan-50 transition-colors">
+                      <td className="py-4 px-4 font-semibold text-slate-900">{app.full_name || app.name || 'Unknown'}</td>
+                      <td className="py-4 px-4 text-slate-600">{app.job_title}</td>
+                      <td className="py-4 px-4">
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${statusColors[app.status] || 'bg-slate-100 text-slate-700'}`}>
+                          {app.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-slate-500">{new Date(app.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         ) : (
-          <p className="text-gray-light font-body text-sm">No recent applications</p>
+          <p className="text-slate-500 text-center py-8">No recent applications</p>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -288,68 +333,95 @@ const JobsManager = () => {
   const jobs = data?.data?.results || data?.data || [];
 
   const deleteJob = async (id: string) => {
-    if (!confirm('Delete this job?')) return;
+    if (!confirm('Delete this job posting?')) return;
     await adminAPI.deleteJob(id);
     refetch();
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="flex items-center justify-between"
+      >
         <div>
-          <h1 className="font-display font-black text-2xl text-black">Jobs</h1>
-          <p className="text-gray-light text-sm font-body">{jobs.length} total positions</p>
+          <h1 className="font-black text-3xl text-slate-900 mb-2">Job Postings</h1>
+          <p className="text-slate-600 text-base">{jobs.length} active positions</p>
         </div>
-        <button onClick={() => { setEditJob(null); setFormOpen(true); }} className="btn-primary text-sm">
-          <PlusCircle className="w-4 h-4" /> Add Job
+        <button 
+          onClick={() => { setEditJob(null); setFormOpen(true); }}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 active:scale-95"
+        >
+          <PlusCircle className="w-5 h-5" /> Create Job
         </button>
-      </div>
+      </motion.div>
 
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr className="text-left">
-                {['Title', 'Company', 'Location', 'Industry', 'Type', 'Status', 'Actions'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-xs font-display text-gray-light uppercase tracking-wide font-semibold">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {jobs.map((job: any) => (
-                <tr key={job.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3">
-                    <p className="text-gray-dark font-body text-xs">{job.title}</p>
-                  </td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{job.company_name}</td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{job.location}</td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{job.industry || '—'}</td>
-                  <td className="px-4 py-3">
-                    <span className="status-badge bg-gray-50 text-gray-medium text-xs">{job.job_type}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`status-badge text-xs ${job.status === 'Published' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-400'}`}>
-                      {job.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => { setEditJob(job); setFormOpen(true); }}
-                        className="p-1.5 text-gray-light hover:text-black transition-colors">
-                        <Pencil className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => deleteJob(job.id)}
-                        className="p-1.5 text-gray-light hover:text-red-400 transition-colors">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="bg-white border-2 border-slate-200 rounded-2xl overflow-hidden"
+      >
+        {jobs.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-slate-200 bg-slate-50">
+                  <th className="px-4 py-3 text-left text-xs font-black text-slate-700 uppercase tracking-widest">Job Title</th>
+                  <th className="px-4 py-3 text-left text-xs font-black text-slate-700 uppercase tracking-widest">Location</th>
+                  <th className="px-4 py-3 text-left text-xs font-black text-slate-700 uppercase tracking-widest">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-black text-slate-700 uppercase tracking-widest">Status</th>
+                  <th className="px-4 py-3 text-center text-xs font-black text-slate-700 uppercase tracking-widest">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {jobs.map((job: any) => (
+                  <tr key={job.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-4 font-bold text-slate-900">{job.title}</td>
+                    <td className="px-4 py-4 text-slate-600">{job.location}</td>
+                    <td className="px-4 py-4"><span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full">{job.job_type}</span></td>
+                    <td className="px-4 py-4">
+                      <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                        job.status === 'Published' 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {job.status === 'Published' ? '✓ Published' : '⏸ Draft'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <button 
+                          onClick={() => { setEditJob(job); setFormOpen(true); }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="Edit"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => deleteJob(job.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Briefcase className="w-16 h-16 text-slate-300 mb-4" />
+            <p className="text-slate-600 font-semibold text-lg">No job postings yet</p>
+            <p className="text-slate-500">Create your first job posting by clicking the "Create Job" button above</p>
+          </div>
+        )}
+      </motion.div>
 
       {formOpen && <AdminJobForm job={editJob} onClose={() => { setFormOpen(false); refetch(); }} />}
     </div>
@@ -359,16 +431,15 @@ const JobsManager = () => {
 const ApplicationsManager = () => {
   const { data, refetch } = useQuery({ queryKey: ['admin-applications'], queryFn: adminAPI.getApplications });
   const apps = data?.data?.results || data?.data || [];
-  const [forwardModalApp, setForwardModalApp] = useState<any>(null);
 
   const STATUS_OPTIONS = ['Applied', 'Under Review', 'Shortlisted', 'Interview Scheduled', 'Rejected', 'Hired'];
-  const STATUS_COLOR: Record<string, string> = {
-    Applied: 'bg-blue-500/15 text-blue-400',
-    'Under Review': 'bg-yellow-500/15 text-yellow-400',
-    Shortlisted: 'bg-green-500/15 text-green-400',
-    'Interview Scheduled': 'bg-purple-500/15 text-purple-400',
-    Rejected: 'bg-red-500/15 text-red-400',
-    Hired: 'bg-emerald-500/15 text-emerald-400',
+  const STATUS_COLORS: Record<string, string> = {
+    Applied: 'bg-blue-100 text-blue-700 border-blue-300',
+    'Under Review': 'bg-yellow-100 text-yellow-700 border-yellow-300',
+    Shortlisted: 'bg-green-100 text-green-700 border-green-300',
+    'Interview Scheduled': 'bg-purple-100 text-purple-700 border-purple-300',
+    Rejected: 'bg-red-100 text-red-700 border-red-300',
+    Hired: 'bg-emerald-100 text-emerald-700 border-emerald-300',
   };
 
   const updateStatus = async (id: string, status: string) => {
@@ -378,259 +449,117 @@ const ApplicationsManager = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display font-black text-2xl text-black">Applications</h1>
-        <p className="text-gray-light text-sm font-body">{apps.length} total applications</p>
-      </div>
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[900px]">
-            <thead className="bg-gray-50">
-              <tr className="text-left">
-                {['Applicant', 'Email', 'Phone', 'Applied For', 'Experience', 'CV', 'Date', 'Status', 'Forward'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-xs font-display text-gray-light uppercase tracking-wide font-semibold">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {apps.map((app: any) => (
-                <tr key={app.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 text-gray-dark font-body text-xs">{app.full_name}</td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{app.email}</td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{app.phone}</td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{app.job_title}</td>
-                  <td className="px-4 py-3 text-gray-medium font-body text-xs">{app.experience}</td>
-                  <td className="px-4 py-3">
-                    {app.cv_file && (
-                      <a href={app.cv_file} download className="inline-flex items-center gap-1 text-black hover:text-black-light text-xs font-body transition-colors">
-                        <Download className="w-3.5 h-3.5" /> CV
-                      </a>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-gray-light font-body text-xs">{new Date(app.created_at).toLocaleDateString()}</td>
-                  <td className="px-4 py-3">
-                    <select value={app.status} onChange={(e) => updateStatus(app.id, e.target.value)}
-                      className={`text-xs px-2 py-1 rounded-full border-0 font-display font-semibold tracking-wide cursor-pointer focus:outline-none ${STATUS_COLOR[app.status] || 'bg-gray-50 text-gray-medium'}`}>
-                      {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button onClick={() => setForwardModalApp(app)} className="btn-outline py-1 px-3 text-xs whitespace-nowrap">
-                      Forward →
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {forwardModalApp && (
-        <ForwardCandidateModal
-          application={forwardModalApp}
-          onClose={() => setForwardModalApp(null)}
-          onSuccess={() => { setForwardModalApp(null); refetch(); }}
-        />
-      )}
-    </div>
-  );
-};
-
-// ── Forward Candidate Modal ───────────────────────────────────────────────────
-const ForwardCandidateModal = ({ application, onClose, onSuccess }: any) => {
-  const { data } = useQuery({ queryKey: ['admin-employers-forward'], queryFn: adminAPI.getEmployers });
-  const employers = data?.data?.results || data?.data || [];
-
-  const [selectedEmp, setSelectedEmp] = useState('');
-  const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleForward = async () => {
-    if (!selectedEmp) return;
-    setLoading(true);
-    try {
-      await adminAPI.forwardCandidate(application.id, parseInt(selectedEmp, 10), notes);
-      onSuccess();
-    } catch (err) {
-      alert('Failed to forward candidate.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white border border-gray-light p-6 w-full max-w-md shadow-2xl">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-display font-bold text-lg text-black">Forward Candidate</h3>
-          <button onClick={onClose} className="text-gray-medium hover:text-black"><X className="w-5 h-5" /></button>
-        </div>
-
-        <div className="mb-6 p-3 bg-gray-50 border border-gray-light text-sm font-body">
-          <p className="text-gray-dark font-semibold mb-1">{application.full_name}</p>
-          <p className="text-gray-medium text-xs">Applied for: {application.job_title}</p>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <label className="text-gray-medium text-xs font-body block mb-1">Select Employer *</label>
-            <select value={selectedEmp} onChange={e => setSelectedEmp(e.target.value)} className="input-field w-full">
-              <option value="">-- Choose Employer --</option>
-              {employers.map((emp: any) => (
-                <option key={emp.id} value={emp.id}>{emp.company_name} ({emp.email})</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="text-gray-medium text-xs font-body block mb-1">Admin Notes (visible to employer)</label>
-            <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3} className="input-field w-full resize-none" placeholder="e.g. Strong React skills, within budget." />
-          </div>
-        </div>
-
-        <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="btn-outline flex-1 py-2">Cancel</button>
-          <button onClick={handleForward} disabled={!selectedEmp || loading} className="btn-primary flex-1 py-2 justify-center disabled:opacity-50">
-            {loading ? 'Forwarding...' : 'Forward'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ── Candidates Manager ────────────────────────────────────────────────────────
-const CandidatesManager = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const { data, isLoading } = useQuery({
-    queryKey: ['admin-candidates', searchTerm],
-    queryFn: () => adminAPI.getCandidates({ search: searchTerm })
-  });
-
-  const candidates = data?.data?.results || data?.data || [];
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div>
-          <h1 className="font-display font-black text-2xl text-black">Registered Candidates</h1>
-          <p className="text-gray-light text-sm font-body">Candidate Talent Pool</p>
+          <h1 className="font-black text-3xl text-slate-900 mb-2">Applications</h1>
+          <p className="text-slate-600 text-base">{apps.length} total applications received</p>
         </div>
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="input-field text-sm w-full sm:w-64"
-        />
-      </div>
+      </motion.div>
 
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[600px]">
-            <thead className="bg-gray-50">
-              <tr className="text-left">
-                {['Name', 'Email', 'Role', 'Joined Date'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-xs font-display text-gray-light uppercase tracking-wide font-semibold">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {isLoading ? (
-                <tr><td colSpan={4} className="p-8 text-center"><div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin mx-auto" /></td></tr>
-              ) : candidates.length > 0 ? (
-                candidates.map((cand: any) => (
-                  <tr key={cand.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3">
-                      <p className="text-gray-dark font-heading font-semibold text-xs">{cand.first_name} {cand.last_name}</p>
-                    </td>
-                    <td className="px-4 py-3 text-gray-medium font-body text-xs">{cand.email}</td>
-                    <td className="px-4 py-3">
-                      <span className="status-badge bg-gray-50 text-gray-medium text-xs">{cand.role}</span>
-                    </td>
-                    <td className="px-4 py-3 text-gray-light font-body text-xs">{new Date(cand.date_joined).toLocaleDateString()}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-gray-light font-body text-sm">
-                    No candidates found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ── Employers Manager ────────────────────────────────────────────────────────
-const AdminEmployersView = () => {
-  const { data, refetch } = useQuery({ queryKey: ['admin-employers'], queryFn: adminAPI.getEmployers });
-  const employers = data?.data?.results || data?.data || [];
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editNotes, setEditNotes] = useState('');
-
-  const handleSave = async (id: number) => {
-    await adminAPI.updateEmployer(id, { active_requirements: editNotes });
-    setEditingId(null);
-    refetch();
-  };
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-display font-black text-2xl text-black">Registered Employers</h1>
-        <p className="text-gray-light text-sm font-body">{employers.length} active employers</p>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4">
-        {employers.map((emp: any) => (
-          <div key={emp.id} className="card p-5">
-            <div className="flex flex-col md:flex-row justify-between gap-4">
-              <div>
-                <h3 className="font-heading font-semibold text-black text-lg">{emp.company_name}</h3>
-                <p className="text-gray-medium text-sm font-body">{emp.first_name} {emp.last_name} · {emp.email}</p>
-                <div className="flex gap-4 mt-2 text-xs text-gray-light font-body">
-                  {emp.phone && <span>📞 {emp.phone}</span>}
-                  {emp.industry && <span>🏢 {emp.industry}</span>}
-                  {emp.location && <span>📍 {emp.location}</span>}
-                </div>
-              </div>
-              <div className="min-w-[300px]">
-                <p className="text-gray-medium text-xs font-display uppercase tracking-wide mb-2">Active Requirements (Admin Notes)</p>
-                {editingId === emp.id ? (
-                  <div className="space-y-2">
-                    <textarea
-                      value={editNotes}
-                      onChange={e => setEditNotes(e.target.value)}
-                      className="input-field w-full text-sm"
-                      rows={3}
-                      placeholder="e.g. Needs 5 Python devs in Mumbai"
-                    />
-                    <div className="flex gap-2 justify-end">
-                      <button onClick={() => setEditingId(null)} className="text-gray-medium hover:text-black text-xs px-3 py-1">Cancel</button>
-                      <button onClick={() => handleSave(emp.id)} className="bg-black text-black font-semibold text-xs px-3 py-1 rounded">Save</button>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="space-y-4"
+      >
+        {apps.length > 0 ? (
+          apps.map((app: any, idx: number) => (
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: idx * 0.05 }}
+              className="bg-white border-2 border-slate-200 rounded-2xl p-6 hover:border-cyan-400 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Candidate Details */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div>
+                    <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Full Name</p>
+                    <p className="text-xl font-black text-slate-900">{app.full_name || app.name || 'N/A'}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Email</p>
+                      <p className="text-sm font-semibold text-slate-700">{app.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Phone</p>
+                      <p className="text-sm font-semibold text-slate-700">{app.phone}</p>
                     </div>
                   </div>
-                ) : (
-                  <div className="group relative bg-gray-50 p-3 rounded border border-gray-light hover:border-gray-light transition-colors">
-                    <p className="text-gray-medium text-sm font-body whitespace-pre-line pr-8">
-                      {emp.active_requirements || <span className="text-gray-light italic">No notes added yet...</span>}
-                    </p>
-                    <button onClick={() => { setEditingId(emp.id); setEditNotes(emp.active_requirements || ''); }}
-                      className="absolute top-2 right-2 p-1.5 text-gray-light hover:text-black opacity-0 group-hover:opacity-100 transition-all">
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Experience</p>
+                      <p className="text-sm font-semibold text-slate-700">{app.experience}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-1">Applied Date</p>
+                      <p className="text-sm font-semibold text-slate-700">{new Date(app.created_at).toLocaleDateString()}</p>
+                    </div>
                   </div>
-                )}
+                </div>
+
+                {/* Job & Status Info */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="bg-cyan-50 border-2 border-cyan-200 rounded-xl p-4">
+                    <p className="text-xs font-black text-cyan-600 uppercase tracking-widest mb-2">Applied For</p>
+                    <p className="text-lg font-black text-slate-900">{app.job_title}</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Status</p>
+                      <select
+                        value={app.status}
+                        onChange={(e) => updateStatus(app.id, e.target.value)}
+                        className={`w-full px-4 py-2.5 rounded-lg font-bold text-sm border-2 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all ${
+                          STATUS_COLORS[app.status] || 'bg-slate-100 text-slate-700 border-slate-300'
+                        }`}
+                      >
+                        {STATUS_OPTIONS.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Download CV Button */}
+                    {app.cv_file || app.resume || app.file ? (
+                      <a
+                        href={app.cv_file || app.resume || app.file}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-lg hover:shadow-lg hover:shadow-cyan-500/30 transition-all duration-300 active:scale-95"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download CV
+                      </a>
+                    ) : (
+                      <div className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-slate-100 text-slate-500 font-bold rounded-lg border-2 border-slate-200">
+                        <FileText className="w-4 h-4" />
+                        No CV Uploaded
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            </motion.div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <FileText className="w-16 h-16 text-slate-300 mb-4" />
+            <p className="text-slate-600 font-semibold text-lg">No applications yet</p>
+            <p className="text-slate-500">Applications will appear here when candidates apply</p>
           </div>
-        ))}
-      </div>
+        )}
+      </motion.div>
     </div>
   );
 };
@@ -642,30 +571,54 @@ const EnquiriesManager = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display font-black text-2xl text-black">Business Enquiries</h1>
-        <p className="text-gray-light text-sm font-body">{enquiries.length} total enquiries</p>
-      </div>
-      <div className="grid grid-cols-1 gap-4">
-        {enquiries.map((enq: any) => (
-          <div key={enq.id} className="card p-5">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
-              <div>
-                <p className="font-heading font-semibold text-black text-sm">{enq.company_name}</p>
-                <p className="text-gray-medium text-xs font-body">{enq.contact_person} · {enq.email} · {enq.phone}</p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <div>
+          <h1 className="font-black text-3xl text-slate-900 mb-2">Business Enquiries</h1>
+          <p className="text-slate-600 text-base">{enquiries.length} total enquiries</p>
+        </div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="grid grid-cols-1 gap-4"
+      >
+        {enquiries.length > 0 ? (
+          enquiries.map((enq: any, idx: number) => (
+            <motion.div
+              key={enq.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: idx * 0.05 }}
+              className="bg-white border-2 border-slate-200 rounded-2xl p-6 hover:border-orange-400 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div>
+                  <p className="font-black text-lg text-slate-900">{enq.company_name}</p>
+                  <p className="text-sm text-slate-600 mt-1">{enq.contact_person} · {enq.email} · {enq.phone}</p>
+                </div>
+                <span className="text-xs font-semibold text-slate-500">{new Date(enq.created_at).toLocaleDateString()}</span>
               </div>
-              <span className="text-gray-light text-xs font-body">{new Date(enq.created_at).toLocaleDateString()}</span>
-            </div>
-            <div className="flex flex-wrap gap-3 text-xs font-body text-gray-medium mb-3">
-              <span>📋 {enq.hiring_requirement}</span>
-              <span>👤 {enq.number_of_positions} positions</span>
-              <span>📍 {enq.job_location}</span>
-            </div>
-            {enq.message && <p className="text-gray-light text-xs font-body leading-relaxed">{enq.message}</p>}
+              <div className="flex flex-wrap gap-4 text-sm font-medium text-slate-700 mb-4">
+                <span className="bg-orange-50 text-orange-700 px-3 py-1 rounded-full">📋 {enq.hiring_requirement}</span>
+                <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">👤 {enq.number_of_positions} positions</span>
+                <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full">📍 {enq.job_location}</span>
+              </div>
+              {enq.message && <p className="text-slate-600 text-sm leading-relaxed">{enq.message}</p>}
+            </motion.div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center bg-white border-2 border-slate-200 rounded-2xl">
+            <Briefcase className="w-16 h-16 text-slate-300 mb-4" />
+            <p className="text-slate-600 font-semibold text-lg">No enquiries yet</p>
+            <p className="text-slate-500">Business enquiries will appear here</p>
           </div>
-        ))}
-        {!enquiries.length && <div className="text-gray-light font-body text-sm py-10 text-center">No enquiries yet</div>}
-      </div>
+        )}
+      </motion.div>
     </div>
   );
 };
@@ -692,56 +645,70 @@ const AdminLoginGate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Elements */}
+      <motion.div 
+        className="absolute top-0 -right-1/3 w-96 h-96 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/10 blur-3xl"
+        animate={{ y: [0, 50, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div 
+        className="absolute -bottom-1/4 -left-1/3 w-80 h-80 rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/10 blur-3xl"
+        animate={{ y: [0, -40, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="w-full max-w-sm"
+        className="w-full max-w-sm relative z-10"
       >
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-black mx-auto flex items-center justify-center mb-4">
-            <Briefcase className="w-7 h-7 text-white" />
+          <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 mx-auto flex items-center justify-center mb-4 rounded-xl shadow-lg shadow-cyan-500/30">
+            <Briefcase className="w-8 h-8 text-white" />
           </div>
-          <h1 className="font-display font-black text-2xl text-black tracking-tight">OPTIMUS ADMIN</h1>
-          <p className="text-gray-medium font-body text-sm mt-1">Sign in to access the admin panel</p>
+          <h1 className="font-black text-3xl text-white tracking-tight">OPTIMUS ADMIN</h1>
+          <p className="text-cyan-300 font-medium text-sm mt-2">Access to Administration Panel</p>
         </div>
-        <div className="bg-white border border-gray-light shadow-[0_8px_32px_rgba(0,0,0,0.06)] p-8">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-blue-500/20 p-8 rounded-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-display font-bold text-gray-dark mb-2 tracking-wide uppercase">Email Address</label>
+              <label className="block text-xs font-black text-white mb-2 tracking-widest uppercase">Email Address</label>
               <input
                 type="email"
                 autoFocus
+                autoComplete="off"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="admin@optimusmanpower.com"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-light text-black placeholder-gray-medium text-sm font-body focus:outline-none focus:border-black focus:bg-white transition-all duration-200"
+                placeholder="Enter Email"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white placeholder-white/50 text-sm font-medium focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30 transition-all duration-300 rounded-lg backdrop-blur-sm"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-display font-bold text-gray-dark mb-2 tracking-wide uppercase">Password</label>
+              <label className="block text-xs font-black text-white mb-2 tracking-widest uppercase">Password</label>
               <input
                 type="password"
+                autoComplete="off"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-light text-black placeholder-gray-medium text-sm font-body focus:outline-none focus:border-black focus:bg-white transition-all duration-200"
+                placeholder="Enter Password"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 text-white placeholder-white/50 text-sm font-medium focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30 transition-all duration-300 rounded-lg backdrop-blur-sm"
                 required
               />
             </div>
             {error && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-500 text-xs font-body">
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-sm font-semibold">
                 {error}
               </motion.p>
             )}
-            <button type="submit" disabled={loading} className="w-full btn-primary py-3 justify-center mt-2 disabled:opacity-60">
-              {loading ? 'Signing In...' : 'Sign In to Admin Panel'}
+            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-black py-3 rounded-lg hover:shadow-xl hover:shadow-cyan-500/30 active:scale-95 transition-all duration-300 disabled:opacity-60 uppercase tracking-widest text-sm">
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
         </div>
-        <p className="text-center text-gray-light text-xs font-body mt-6">Optimus Manpower — Administration Only</p>
+        <p className="text-center text-white/60 text-xs font-medium mt-6">Optimus Manpower — Administration Only</p>
       </motion.div>
     </div>
   );
@@ -752,29 +719,26 @@ const AdminPanel = () => {
   const { user, isLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-gray-light font-body">Loading...</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-slate-600 font-medium">Loading...</div>;
   if (!user) return <AdminLoginGate />;
   if (user.role !== 'admin') return <Navigate to="/" replace />;
 
   return (
-    <div className="min-h-screen flex bg-white">
+    <div className="min-h-screen flex bg-slate-50">
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
       <div className="flex-1 lg:ml-64 min-h-screen">
-        <div className="bg-white/80 backdrop-blur-sm border-b border-gray-light px-4 py-4 flex items-center gap-4 lg:hidden">
-          <button onClick={() => setSidebarOpen(true)} className="text-gray-medium hover:text-black">
+        <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 px-4 py-4 flex items-center gap-4 lg:hidden shadow-sm">
+          <button onClick={() => setSidebarOpen(true)} className="text-slate-600 hover:text-slate-900">
             <Menu className="w-5 h-5" />
           </button>
-          <span className="font-display font-black text-sm text-black">OPTIMUS ADMIN</span>
+          <span className="font-black text-sm text-slate-900">OPTIMUS ADMIN</span>
         </div>
         <div className="p-6 md:p-8">
           <Routes>
             <Route index element={<Dashboard />} />
             <Route path="jobs" element={<JobsManager />} />
             <Route path="applications" element={<ApplicationsManager />} />
-            <Route path="candidates" element={<CandidatesManager />} />
-            <Route path="employers" element={<AdminEmployersView />} />
             <Route path="enquiries" element={<EnquiriesManager />} />
-            <Route path="analytics" element={<Analytics />} />
           </Routes>
         </div>
       </div>
