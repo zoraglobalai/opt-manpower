@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle, Users, Globe, Layers, Cpu, Award, TrendingUp, Clock, Star, Building2 } from 'lucide-react';
 import { contentAPI } from '../services/api';
 import AuthModal from '../components/AuthModal';
+import CountUp from '../components/CountUp';
 
 // Hero Background
 import heroBg from '../asserts/jon-bg1.webp';
@@ -91,9 +92,9 @@ const EmployerHome = () => {
               <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-8">
                 <div className="inline-flex items-center gap-2 bg-black/8 border border-black/20 px-4 py-2 mb-6 rounded">
                   <Building2 className="w-4 h-4 text-black" />
-                  <span className="text-xs font-display font-bold text-black tracking-wide">EMPLOYER SOLUTIONS</span>
+                  <span className="hero-kicker text-black">EMPLOYER SOLUTIONS</span>
                 </div>
-                <h1 className="font-display font-black text-6xl lg:text-7xl leading-[1.1] text-black mb-6">
+                <h1 className="hero-title hero-title-animate hero-title-glow text-6xl lg:text-7xl leading-[1.1] text-black mb-6">
                   Build Your <br />
                   <span className="relative">
                     Elite Team
@@ -106,29 +107,33 @@ const EmployerHome = () => {
               </motion.div>
 
               {/* Mini Stats */}
-              <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="flex gap-8 mt-10 mb-10">
-                <div>
-                  <p className="font-display font-black text-3xl text-black">10K+</p>
+              <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="flex flex-wrap gap-4 mt-10 mb-10">
+                <div className="bg-black/5 border border-black/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+                  <p className="font-display font-black text-3xl text-black">
+                    <CountUp value={10000} format="compact" suffix="+" />
+                  </p>
                   <p className="text-xs text-gray-medium font-body mt-1">Candidates</p>
                 </div>
-                <div className="w-px bg-gray-light" />
-                <div>
-                  <p className="font-display font-black text-3xl text-black">14</p>
+                <div className="bg-black/5 border border-black/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+                  <p className="font-display font-black text-3xl text-black">
+                    <CountUp value={14} />
+                  </p>
                   <p className="text-xs text-gray-medium font-body mt-1">Days Average</p>
                 </div>
-                <div className="w-px bg-gray-light" />
-                <div>
-                  <p className="font-display font-black text-3xl text-black">500+</p>
+                <div className="bg-black/5 border border-black/10 rounded-xl px-4 py-3 backdrop-blur-sm">
+                  <p className="font-display font-black text-3xl text-black">
+                    <CountUp value={500} format="plain" suffix="+" />
+                  </p>
                   <p className="text-xs text-gray-medium font-body mt-1">Companies</p>
                 </div>
               </motion.div>
 
               {/* CTAs */}
               <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="flex flex-wrap gap-4">
-                <a href="#enquiry" className="px-8 py-4 bg-black text-white font-display font-semibold rounded-xl hover:bg-black/90 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl">
+                <a href="#enquiry" className="px-8 py-4 bg-black text-white font-display font-semibold rounded-full hover:bg-black/90 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl">
                   Start Hiring <ArrowRight className="w-4 h-4" />
                 </a>
-                <a href="#solutions" className="px-8 py-4 bg-white border-2 border-black/20 text-black font-display font-semibold rounded-xl hover:border-black hover:bg-black/2 transition-all duration-300">
+                <a href="#solutions" className="px-8 py-4 bg-white border-2 border-black/20 text-black font-display font-semibold rounded-full hover:border-black hover:bg-black/2 transition-all duration-300">
                   Explore Solutions
                 </a>
               </motion.div>

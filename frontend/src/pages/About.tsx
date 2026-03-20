@@ -8,6 +8,15 @@ import {
   Mail, Shield, Zap, Search, BarChart2, FileText,
 } from 'lucide-react';
 import { contentAPI } from '../services/api';
+import CountUp from '../components/CountUp';
+import itImg from '../asserts/IT&Technology.webp';
+import healthcareImg from '../asserts/Healthcare.webp';
+import engineeringImg from '../asserts/Engineering.webp';
+import financeImg from '../asserts/Finance&Banking.webp';
+import salesImg from '../asserts/Sales&Marketing.webp';
+import hospitalityImg from '../asserts/Hospitality.webp';
+import constructionImg from '../asserts/Construction.webp';
+import logisticsImg from '../asserts/Logistics.webp';
 
 // ── Static Data ──────────────────────────────────────────────────────────────
 
@@ -67,14 +76,14 @@ const SERVICES = [
 ];
 
 const INDUSTRIES = [
-  { name: 'IT & Technology', icon: '💻', count: '2,800+ placements' },
-  { name: 'Healthcare & Nursing', icon: '🏥', count: '1,900+ placements' },
-  { name: 'Engineering & Construction', icon: '🏗️', count: '2,100+ placements' },
-  { name: 'Finance & Banking', icon: '🏦', count: '850+ placements' },
-  { name: 'Sales & Marketing', icon: '📊', count: '720+ placements' },
-  { name: 'Hospitality & Tourism', icon: '🏨', count: '640+ placements' },
-  { name: 'Logistics & Supply Chain', icon: '🚛', count: '580+ placements' },
-  { name: 'Manufacturing & Operations', icon: '⚙️', count: '410+ placements' },
+  { name: 'IT & Technology', image: itImg, count: '2,800+ placements' },
+  { name: 'Healthcare & Nursing', image: healthcareImg, count: '1,900+ placements' },
+  { name: 'Engineering & Construction', image: engineeringImg, count: '2,100+ placements' },
+  { name: 'Finance & Banking', image: financeImg, count: '850+ placements' },
+  { name: 'Sales & Marketing', image: salesImg, count: '720+ placements' },
+  { name: 'Hospitality & Tourism', image: hospitalityImg, count: '640+ placements' },
+  { name: 'Logistics & Supply Chain', image: logisticsImg, count: '580+ placements' },
+  { name: 'Manufacturing & Operations', image: constructionImg, count: '410+ placements' },
 ];
 
 const PROCESS = [
@@ -95,12 +104,12 @@ const DIFFERENTIATORS = [
 ];
 
 const STATS = [
-  { value: '10,000+', label: 'Successful Placements', icon: Users },
-  { value: '500+', label: 'Verified Employer Partners', icon: Briefcase },
-  { value: '12+', label: 'Countries Served', icon: Globe },
-  { value: '15+', label: 'Years of Industry Experience', icon: Award },
-  { value: '92%', label: 'Candidate Retention Rate', icon: CheckCircle },
-  { value: '48 hrs', label: 'Average Response Time', icon: Zap },
+  { value: 10000, suffix: '+', label: 'Successful Placements', icon: Users },
+  { value: 500, suffix: '+', label: 'Verified Employer Partners', icon: Briefcase },
+  { value: 12, suffix: '+', label: 'Countries Served', icon: Globe },
+  { value: 15, suffix: '+', label: 'Years of Industry Experience', icon: Award },
+  { value: 92, suffix: '%', label: 'Candidate Retention Rate', icon: CheckCircle },
+  { value: 48, suffix: ' hrs', label: 'Average Response Time', icon: Zap },
 ];
 
 const LOCATIONS = [
@@ -122,7 +131,7 @@ const About = () => {
   const reviews = (testimonials?.data?.results || testimonials?.data || []).slice(0, 3);
 
   return (
-    <main className="min-h-screen pt-10 md:pt-24">
+    <main className="min-h-screen pt-0">
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="bg-black text-white py-16 md:py-24 relative overflow-hidden">
@@ -132,18 +141,18 @@ const About = () => {
         </div>
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
-            <motion.p variants={fadeUp} className="text-xs font-display font-bold text-gray-400 tracking-widest uppercase mb-4">Our Story</motion.p>
-            <motion.h1 variants={fadeUp} className="font-display font-black text-5xl md:text-7xl text-white leading-tight max-w-4xl mb-6">
+            <motion.p variants={fadeUp} className="hero-kicker text-gray-400 mb-4">Our Story</motion.p>
+            <motion.h1 variants={fadeUp} className="hero-title hero-title-animate hero-title-glow text-5xl md:text-7xl text-white leading-tight max-w-4xl mb-6">
               Premier Global <span className="text-gray-300">Recruitment & Staffing</span>
             </motion.h1>
             <motion.p variants={fadeUp} className="text-gray-300 font-body text-lg leading-relaxed max-w-2xl mb-10">
               Optimus Manpower stands at the forefront of global talent acquisition and strategic staffing. With over 15 years of excellence, we empower organizations across India and the Middle East by delivering exceptional workforce solutions one successful placement at a time.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-              <Link to="/jobs" className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-black font-heading font-semibold text-sm hover:bg-gray-100 transition-all">
+              <Link to="/jobs" className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-black font-heading font-semibold text-sm rounded-full hover:bg-gray-100 transition-all">
                 Explore Opportunities <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link to="/contact" className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/40 text-white font-heading font-semibold text-sm hover:bg-white/10 transition-all">
+              <Link to="/contact" className="inline-flex items-center gap-2 px-7 py-3.5 border border-white/40 text-white font-heading font-semibold text-sm rounded-full hover:bg-white/10 transition-all">
                 Partner With Us
               </Link>
             </motion.div>
@@ -155,10 +164,12 @@ const About = () => {
       <section className="bg-white border-b border-gray-light py-14">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
-            {STATS.map(({ value, label, icon: Icon }, i) => (
+            {STATS.map(({ value, suffix, label, icon: Icon }, i) => (
               <motion.div key={label} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp} className="text-center">
                 <Icon className="w-5 h-5 text-black/40 mx-auto mb-2" />
-                <p className="font-display font-black text-3xl text-black">{value}</p>
+                <p className="font-display font-black text-3xl text-black">
+                  <CountUp value={value} format="plain" suffix={suffix} />
+                </p>
                 <p className="text-gray-medium text-xs font-body mt-1 leading-snug">{label}</p>
               </motion.div>
             ))}
@@ -227,10 +238,13 @@ const About = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-          {INDUSTRIES.map(({ name, icon, count }, i) => (
+          {INDUSTRIES.map(({ name, image, count }, i) => (
             <motion.div key={name} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}
               className="card p-6 text-center hover:border-black/20 transition-all group">
-              <span className="text-3xl mb-3 block">{icon}</span>
+              <div className="relative h-24 mb-4 rounded-xl overflow-hidden border border-black/5">
+                <img src={image} alt={name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/20 to-transparent" />
+              </div>
               <p className="font-heading font-semibold text-black text-sm mb-1">{name}</p>
               <p className="text-gray-medium text-xs font-body">{count}</p>
             </motion.div>

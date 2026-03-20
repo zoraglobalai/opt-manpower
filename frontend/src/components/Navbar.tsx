@@ -9,6 +9,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [aboutOpen, setAboutOpen] = useState(false);
   const location = useLocation();
 
@@ -16,8 +17,13 @@ const Navbar = () => {
     const fn = () => {
       setScrolled(window.scrollY > 20);
       if (window.scrollY > 20) setMenuOpen(false);
+      const doc = document.documentElement;
+      const total = doc.scrollHeight - doc.clientHeight;
+      const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
+      setScrollProgress(progress);
     };
     window.addEventListener('scroll', fn);
+    fn();
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
@@ -37,6 +43,17 @@ const Navbar = () => {
      after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:bg-white
      after:origin-left after:transition-transform after:duration-200
      ${isActive(path) ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'}`;
+
+  const scrollToJobsHero = () => {
+    setTimeout(() => {
+      const el = document.getElementById('jobs-hero');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 0);
+  };
 
   return (
     <>
@@ -59,7 +76,7 @@ const Navbar = () => {
             {mode === 'candidate' && (
               <>
                 <Link to="/" className={navLinkClass('/')}>Home</Link>
-                <Link to="/jobs" className={navLinkClass('/jobs')} onClick={() => window.scrollTo(0, 0)}>Search Jobs</Link>
+                <Link to="/jobs#jobs-hero" className={navLinkClass('/jobs')} onClick={scrollToJobsHero}>Search Jobs</Link>
                 <Link to="/saved-jobs" className={navLinkClass('/saved-jobs')}>Saved Jobs</Link>
                 <Link to="/career-advice" className={navLinkClass('/career-advice')}>Career Advice</Link>
                 <Link to="/about" className={navLinkClass('/about')}>About Us</Link>
@@ -72,23 +89,7 @@ const Navbar = () => {
                 <Link to="/" className={navLinkClass('/')}>Home</Link>
                 <Link to="/solutions" className={navLinkClass('/solutions')}>Solutions</Link>
                 <Link to="/business-enquiry" className={navLinkClass('/business-enquiry')}>Hire Talent</Link>
-                <div className="relative" onMouseEnter={() => setAboutOpen(true)} onMouseLeave={() => setAboutOpen(false)}>
-                  <button className="flex items-center gap-1 text-sm font-body text-white hover:text-gray-300 silver-glow transition-colors">
-                    About Us <ChevronDown className="w-3 h-3" />
-                  </button>
-                  {/* Tailwind conditional render for About dropdown */}
-                  <div
-                    className={`absolute top-full left-0 pt-2 transition-all duration-200 ${
-                      aboutOpen ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-2 invisible pointer-events-none'
-                    }`}
-                  >
-                    <div className="w-44 bg-black border border-gray-600 shadow-lg flex flex-col">
-                      <Link to="/about" className="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-900 transition-colors">About Us</Link>
-                      <Link to="/solutions" className="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-900 transition-colors">Our Solutions</Link>
-                      <Link to="/career-advice" className="block px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-900 transition-colors">Career Advice</Link>
-                    </div>
-                  </div>
-                </div>
+                <Link to="/about" className={navLinkClass('/about')}>About Us</Link>
                 <Link to="/contact" className={navLinkClass('/contact')}>Contact Us</Link>
               </>
             )}
@@ -200,7 +201,7 @@ const Navbar = () => {
                 <Link to="/" className="flex items-center gap-2 py-2 px-3 text-sm text-gray-200 hover:text-white hover:bg-white/5 rounded transition-colors" onClick={handleMobileNavClick}>
                   <Home className="w-3.5 h-3.5" /> Home
                 </Link>
-                <Link to="/jobs" className="flex items-center gap-2 py-2 px-3 text-sm text-gray-200 hover:text-white hover:bg-white/5 rounded transition-colors" onClick={handleMobileNavClick}>
+                <Link to="/jobs#jobs-hero" className="flex items-center gap-2 py-2 px-3 text-sm text-gray-200 hover:text-white hover:bg-white/5 rounded transition-colors" onClick={() => { handleMobileNavClick(); scrollToJobsHero(); }}>
                   <Search className="w-3.5 h-3.5" /> Search Jobs
                 </Link>
                 <Link to="/career-advice" className="flex items-center gap-2 py-2 px-3 text-sm text-gray-200 hover:text-white hover:bg-white/5 rounded transition-colors" onClick={handleMobileNavClick}>
@@ -237,6 +238,7 @@ const Navbar = () => {
 
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 h-0.5 bg-white/70 transition-[width] duration-150" style={{ width: `${scrollProgress}%` }} />
       </header>
     </>
   );

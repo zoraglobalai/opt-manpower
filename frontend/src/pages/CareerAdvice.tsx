@@ -8,6 +8,7 @@ import {
   FileText, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { contentAPI } from '../services/api';
+import CountUp from '../components/CountUp';
 
 // ── Static Content ─────────────────────────────────────────────────────────
 
@@ -273,10 +274,10 @@ const MOCK_ARTICLES = [
 ];
 
 const STATS = [
-  { value: '94%', label: 'Interview success rate for our prepared candidates' },
-  { value: '40%', label: 'Average salary increase when switching with our support' },
-  { value: '7 days', label: 'Average time to first interview for shortlisted profiles' },
-  { value: '1,200+', label: 'Career advice consultations delivered in 2024' },
+  { value: 94, suffix: '%', label: 'Interview success rate for our prepared candidates' },
+  { value: 40, suffix: '%', label: 'Average salary increase when switching with our support' },
+  { value: 7, suffix: ' days', label: 'Average time to first interview for shortlisted profiles' },
+  { value: 1200, suffix: '+', label: 'Career advice consultations delivered in 2024' },
 ];
 
 const fadeUp = {
@@ -331,26 +332,37 @@ const CareerAdvice = () => {
     : allArticles.filter((a) => a.category === activeCategory);
 
   return (
-    <main className="min-h-screen pt-10 md:pt-24 bg-gray-50/30">
+    <main className="min-h-screen pt-0 bg-gray-50/30">
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
-      <section className="bg-black text-white py-14 md:py-20 relative overflow-hidden border-b border-gray-800">
+      <section className="bg-black text-white min-h-screen flex items-center py-14 md:py-20 relative overflow-hidden border-b border-gray-800">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 right-0 w-80 h-80 bg-white rounded-full -mr-40 -mt-40" />
         </div>
         <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="max-w-2xl">
-            <p className="text-xs font-display font-bold text-gray-400 tracking-widest uppercase mb-4">Expert Knowledge Hub</p>
-            <h1 className="font-display font-black text-5xl md:text-6xl text-white leading-tight mb-5">
-              Career <span className="text-gray-300">Advice</span>
-            </h1>
-            <p className="text-gray-300 font-body text-base leading-relaxed mb-8">
-              Industry-leading insights, expert resume tips, and interview strategies from our seasoned recruitment professionals - to help you land the right role, faster.
-            </p>
-            <div className="flex items-center gap-6 text-xs font-body text-gray-400">
-              <span>✍ 50+ Expert Articles</span>
-              <span>💼 15+ Years Experience</span>
-              <span>🌏 India & Gulf Focused</span>
+          <div className="grid grid-cols-1 md:grid-cols-[1.3fr_0.7fr] gap-10 items-end">
+            <div>
+              <p className="hero-kicker text-gray-400 mb-4">Expert Knowledge Hub</p>
+              <h1 className="hero-title hero-title-animate hero-title-glow text-5xl md:text-6xl text-white leading-tight mb-5">
+                Career <span className="text-gray-300">Advice</span>
+              </h1>
+              <p className="text-gray-300 font-body text-base leading-relaxed mb-8">
+                Industry-leading insights, expert resume tips, and interview strategies from our seasoned recruitment professionals - to help you land the right role, faster.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs font-body text-gray-300">
+                <span className="bg-white/10 border border-white/20 rounded-full px-3 py-1 backdrop-blur-sm">✍ 50+ Expert Articles</span>
+                <span className="bg-white/10 border border-white/20 rounded-full px-3 py-1 backdrop-blur-sm">💼 15+ Years Experience</span>
+                <span className="bg-white/10 border border-white/20 rounded-full px-3 py-1 backdrop-blur-sm">🌏 India & Gulf Focused</span>
+                <span className="bg-white/10 border border-white/20 rounded-full px-3 py-1 backdrop-blur-sm">✅ ATS‑Ready Tips</span>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-4 md:justify-end">
+              <Link to="/jobs" className="btn-primary bg-white text-black hover:bg-gray-100">
+                Explore Jobs <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link to="/contact" className="btn-outline border-white/40 text-white hover:bg-white/10">
+                Get Expert Help
+              </Link>
             </div>
           </div>
         </div>
@@ -360,9 +372,11 @@ const CareerAdvice = () => {
       <section className="bg-white border-b border-gray-light py-10">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            {STATS.map(({ value, label }, i) => (
+            {STATS.map(({ value, suffix, label }, i) => (
               <motion.div key={value} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i} variants={fadeUp}>
-                <p className="font-display font-black text-4xl text-black">{value}</p>
+                <p className="font-display font-black text-4xl text-black">
+                  <CountUp value={value} format="plain" suffix={suffix} />
+                </p>
                 <p className="text-gray-medium text-xs font-body mt-1 max-w-[140px] mx-auto leading-snug">{label}</p>
               </motion.div>
             ))}

@@ -169,7 +169,7 @@ const JobDetails = () => {
             </div>
             <div className="flex items-center gap-3 shrink-0">
               {/* Share Button */}
-              <button onClick={handleShare} className="btn-outline py-2.5 px-4 text-sm relative" title="Share">
+              <button onClick={handleShare} className="p-2.5 text-sm text-gray-medium hover:text-black transition-colors relative" title="Share">
                 <Share2 className="w-4 h-4" />
                 {copied && (
                   <motion.span initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
@@ -179,7 +179,7 @@ const JobDetails = () => {
                 )}
               </button>
               {/* Save Button */}
-              <button onClick={toggleSaveJob} className={`py-2.5 px-4 text-sm border transition-all ${isSaved ? 'bg-black/20 border-black text-black' : 'btn-outline'}`} title={isSaved ? 'Saved' : 'Save Job'}>
+              <button onClick={toggleSaveJob} className={`p-2.5 text-sm transition-colors ${isSaved ? 'text-black' : 'text-gray-medium hover:text-black'}`} title={isSaved ? 'Saved' : 'Save Job'}>
                 {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
               </button>
               <button onClick={handleApplyClick} className="btn-primary">Apply Now</button>

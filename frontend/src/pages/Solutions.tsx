@@ -69,7 +69,7 @@ const fadeUp = {
 
 const Solutions = () => {
   return (
-    <main className="min-h-screen pt-10 md:pt-24">
+    <main className="min-h-screen pt-0">
       {/* ── Hero Section ── */}
       <section className="bg-black text-white py-16 md:py-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -77,17 +77,17 @@ const Solutions = () => {
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full -ml-40 -mb-40 blur-3xl" />
         </div>
         
-        <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
           <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
-            <motion.p variants={fadeUp} className="text-xs font-display font-bold text-gray-400 tracking-widest uppercase mb-4">What We Deliver</motion.p>
-            <motion.h1 variants={fadeUp} className="font-display font-black text-5xl md:text-7xl mb-6">
+            <motion.p variants={fadeUp} className="hero-kicker text-gray-400 mb-4">What We Deliver</motion.p>
+            <motion.h1 variants={fadeUp} className="hero-title hero-title-animate hero-title-glow text-5xl md:text-7xl mb-6">
               Empowering Businesses with <br />
               <span className="text-gray-300">Elite Workforce Solutions</span>
             </motion.h1>
-            <motion.p variants={fadeUp} className="text-gray-400 font-body text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            <motion.p variants={fadeUp} className="text-gray-400 font-body text-lg max-w-2xl mb-10 leading-relaxed">
               Optimus Manpower provides a comprehensive suite of recruitment services designed to meet the evolving needs of modern organizations across the globe.
             </motion.p>
-            <motion.div variants={fadeUp} className="flex justify-center gap-4">
+            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
               <Link to="/business-enquiry" className="btn-primary bg-white text-black hover:bg-gray-200 border-none">
                 Start Hiring Now
               </Link>

@@ -6,6 +6,7 @@ import { Search, Filter, X, ChevronLeft, ChevronRight, Globe, MapPin, Sparkles, 
 import { jobsAPI } from '../services/api';
 import JobCard from '../components/JobCard';
 import AuthModal from '../components/AuthModal';
+import CountUp from '../components/CountUp';
 import job from '../asserts/job-bg.webp';
 
 const CATEGORIES = ['IT & Technology', 'Healthcare', 'Finance', 'Engineering', 'Sales', 'Marketing', 'HR', 'Operations', 'Hospitality', 'Construction', 'Logistics', 'Education'];
@@ -112,17 +113,17 @@ const Jobs = () => {
 
       {/* Premium Header Section */}
       <div
-        className="relative pt-32 pb-20 px-4 before:absolute before:inset-0 before:bg-cover before:bg-center before:bg-no-repeat before:opacity-100 before:z-0 after:absolute after:inset-0 after:bg-gradient-to-r after:from-slate-900/95 after:via-slate-900/70 after:to-black/10 after:z-10"
+        id="jobs-hero"
+        className="relative min-h-screen flex items-center px-4 pt-28 pb-12"
         style={{
           backgroundImage: `url(${job})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          // backgroundAttachment: 'fixed'
         }}
       >
-        <div className="max-w-7xl mx-auto relative z-20">
+        <div className="max-w-7xl mx-auto w-full">
           <motion.div
-            className="text-left mb-16 max-w-3xl"
+            className="text-left max-w-3xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
@@ -133,7 +134,7 @@ const Jobs = () => {
               whileHover={{ scale: 1.05 }}
             >
               <motion.div
-                className="w-2 h-2 rounded-full bg-cyan-400"
+                className="w-2 h-2 rounded-full bg-white"
                 animate={{ scale: [1, 1.3, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
@@ -141,11 +142,11 @@ const Jobs = () => {
             </motion.div>
 
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-black leading-tight mb-6">
+            <h1 className="hero-title hero-title-animate hero-title-glow text-5xl md:text-6xl lg:text-7xl leading-tight mb-6">
               <span className="block text-white drop-shadow-md">
                 Discover Your
               </span>
-              <span className="block text-cyan-400 drop-shadow-md">
+              <span className="block text-gray-200 drop-shadow-md">
                 Perfect Career
               </span>
             </h1>
@@ -158,30 +159,28 @@ const Jobs = () => {
 
             {/* Stats Row */}
             <motion.div
-              className="flex flex-wrap justify-start items-center gap-8 md:gap-12 mb-12"
+              className="flex flex-wrap justify-start items-center gap-4 mb-12"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <div className="text-left">
+              <div className="text-left bg-white/10 border border-white/20 rounded-xl px-4 py-3 backdrop-blur-sm">
                 <div className="text-4xl font-display font-black text-white drop-shadow">
-                  {isLoading ? '...' : totalCount}
+                  {isLoading ? '...' : <CountUp value={totalCount} format="plain" />}
                 </div>
-                <div className="text-sm text-cyan-400 font-body mt-1 uppercase tracking-wider font-semibold">Active Positions</div>
+                <div className="text-sm text-gray-200 font-body mt-1 uppercase tracking-wider font-semibold">Active Positions</div>
               </div>
-              <div className="hidden sm:block w-px h-12 bg-white/20" />
-              <div className="text-left">
+              <div className="text-left bg-white/10 border border-white/20 rounded-xl px-4 py-3 backdrop-blur-sm">
                 <div className="text-4xl font-display font-black text-white drop-shadow">
-                  150+
+                  <CountUp value={150} format="plain" suffix="+" />
                 </div>
-                <div className="text-sm text-cyan-400 font-body mt-1 uppercase tracking-wider font-semibold">Companies</div>
+                <div className="text-sm text-gray-200 font-body mt-1 uppercase tracking-wider font-semibold">Companies</div>
               </div>
-              <div className="hidden sm:block w-px h-12 bg-white/20" />
-              <div className="text-left">
+              <div className="text-left bg-white/10 border border-white/20 rounded-xl px-4 py-3 backdrop-blur-sm">
                 <div className="text-4xl font-display font-black text-white drop-shadow">
-                  50+
+                  <CountUp value={50} format="plain" suffix="+" />
                 </div>
-                <div className="text-sm text-cyan-400 font-body mt-1 uppercase tracking-wider font-semibold">Countries</div>
+                <div className="text-sm text-gray-200 font-body mt-1 uppercase tracking-wider font-semibold">Countries</div>
               </div>
             </motion.div>
 
@@ -195,44 +194,35 @@ const Jobs = () => {
               <button
                 onClick={() => setFilters(f => ({ ...f, is_international: '', page: 1 }))}
                 className={`group relative  px-7 py-3 font-semibold text-sm rounded-full transition-all duration-300 overflow-hidden ${!filters.is_international
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40'
-                    : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-400 hover:text-blue-600 hover:shadow-lg'
+                    ? 'bg-white text-black border-2 border-white/60 shadow-lg'
+                    : 'bg-white/10 text-white border-2 border-white/30 hover:bg-white/20 hover:border-white/60'
                   }`}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   All Roles
                 </span>
-                {!filters.is_international && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity" />
-                )}
               </button>
 
               <button
                 onClick={() => setFilters(f => ({ ...f, is_international: 'false', page: 1 }))}
                 className={`group relative px-7 py-3 font-semibold text-sm rounded-full transition-all duration-300 overflow-hidden flex items-center gap-2 ${filters.is_international === 'false'
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40'
-                    : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-400 hover:text-blue-600 hover:shadow-lg'
+                    ? 'bg-white text-black border-2 border-white/60 shadow-lg'
+                    : 'bg-white/10 text-white border-2 border-white/30 hover:bg-white/20 hover:border-white/60'
                   }`}
               >
                 <MapPin className="w-4 h-4" />
                 <span className="relative z-10">Domestic</span>
-                {filters.is_international === 'false' && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity" />
-                )}
               </button>
 
               <button
                 onClick={() => setFilters(f => ({ ...f, is_international: 'true', page: 1 }))}
                 className={`group relative px-7 py-3 font-semibold text-sm rounded-full transition-all duration-300 overflow-hidden flex items-center gap-2 ${filters.is_international === 'true'
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40'
-                    : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-blue-400 hover:text-blue-600 hover:shadow-lg'
+                    ? 'bg-white text-black border-2 border-white/60 shadow-lg'
+                    : 'bg-white/10 text-white border-2 border-white/30 hover:bg-white/20 hover:border-white/60'
                   }`}
               >
                 <Globe className="w-4 h-4" />
                 <span className="relative z-10">International</span>
-                {filters.is_international === 'true' && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover:opacity-20 transition-opacity" />
-                )}
               </button>
             </motion.div>
           </motion.div>
@@ -254,13 +244,13 @@ const Jobs = () => {
             <div className="relative flex items-stretch gap-3 flex-col sm:flex-row">
               {/* Search Input */}
               <div className="flex-1 relative group">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none group-focus-within:text-blue-500 transition-colors" />
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none group-focus-within:text-black transition-colors" />
                 <input
                   type="text"
                   placeholder="Search jobs by title, company, skills..."
                   value={searchInput}
                   onChange={e => setSearchInput(e.target.value)}
-                  className="w-full pl-14 pr-5 py-4 bg-white border-2 border-slate-200 text-slate-900 placeholder-slate-500 text-base font-light focus:outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-500/20 transition-all duration-300 rounded-2xl shadow-sm hover:border-slate-300 hover:shadow-md"
+                  className="w-full pl-14 pr-5 py-4 bg-white border-2 border-gray-light text-black placeholder-gray-400 text-base font-light focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10 transition-all duration-300 rounded-2xl shadow-sm hover:border-gray-medium hover:shadow-md"
                 />
               </div>
 
@@ -269,7 +259,7 @@ const Jobs = () => {
                 {/* Search Button */}
                 <button
                   type="submit"
-                  className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-base rounded-2xl hover:shadow-2xl hover:shadow-blue-500/40 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden"
+                  className="group relative px-8 py-4 bg-black text-white font-semibold text-base rounded-2xl hover:bg-gray-900 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     <Search className="w-4 h-4" />
@@ -282,8 +272,8 @@ const Jobs = () => {
                   type="button"
                   onClick={() => setFiltersOpen(!filtersOpen)}
                   className={`group relative px-6 py-4 font-semibold text-base rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${filtersOpen
-                      ? 'bg-blue-50 border-2 border-blue-500 text-blue-600 shadow-lg shadow-blue-500/20'
-                      : 'bg-white border-2 border-slate-200 text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:shadow-lg'
+                      ? 'bg-black text-white border-2 border-black shadow-lg'
+                      : 'bg-white border-2 border-gray-light text-gray-medium hover:border-black hover:text-black hover:shadow-lg'
                     }`}
                 >
                   <Filter className="w-4 h-4" />
@@ -295,7 +285,7 @@ const Jobs = () => {
                   <button
                     type="button"
                     onClick={clearFilters}
-                    className="group px-6 py-4 bg-red-50 border-2 border-red-200 text-red-600 font-semibold rounded-2xl hover:border-red-400 hover:bg-red-100 hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+                    className="group px-6 py-4 bg-white border-2 border-gray-light text-gray-medium font-semibold rounded-2xl hover:border-black hover:text-black hover:shadow-lg transition-all duration-300 flex items-center justify-center"
                     title="Clear all filters"
                   >
                     <X className="w-4 h-4" />

@@ -25,29 +25,29 @@ body {
 
   /* Buttons */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 bg-black text-white font-heading font-semibold text-sm rounded-none tracking-wide transition-all duration-300 hover:bg-gray-800 hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)];
+    @apply inline-flex items-center gap-2 px-7 py-3.5 bg-black text-white font-heading font-semibold text-sm rounded-full tracking-wide transition-all duration-300 hover:bg-gray-800 hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)];
   }
 
   .btn-outline {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 border-2 border-black text-black font-heading font-semibold text-sm rounded-none tracking-wide transition-all duration-300 hover:bg-black hover:text-white;
+    @apply inline-flex items-center gap-2 px-7 py-3.5 border-2 border-black text-black font-heading font-semibold text-sm rounded-full tracking-wide transition-all duration-300 hover:bg-black hover:text-white;
   }
 
   .btn-dark {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 bg-gray-100 text-black font-heading font-semibold text-sm rounded-none tracking-wide transition-all duration-300 hover:bg-gray-200;
+    @apply inline-flex items-center gap-2 px-7 py-3.5 bg-gray-100 text-black font-heading font-semibold text-sm rounded-full tracking-wide transition-all duration-300 hover:bg-gray-200;
   }
 
   /* Cards */
   .card {
-    @apply bg-white border border-gray-300 transition-all duration-300 hover:border-black hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)];
+    @apply bg-white border border-gray-300 rounded-2xl transition-all duration-300 hover:border-black hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)];
   }
 
   /* Section Title */
   .section-tag {
-    @apply text-black text-xs font-display font-bold tracking-[0.35em] uppercase;
+    @apply inline-flex items-center gap-2 text-black text-[11px] font-heading font-semibold tracking-[0.32em] uppercase bg-black/5 border border-black/10 rounded-full px-4 py-2;
   }
 
   .section-title {
-    @apply font-display font-bold text-3xl md:text-4xl lg:text-5xl text-black leading-tight;
+    @apply font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-black leading-tight tracking-tight;
   }
 
   /* Inputs */
@@ -112,6 +112,58 @@ body {
   .text-premium {
     font-weight: 900;
     letter-spacing: -0.02em;
+  }
+
+  /* Hero Typography */
+  .hero-kicker {
+    @apply text-xs font-heading font-semibold tracking-[0.45em] uppercase;
+  }
+
+  .hero-title {
+    @apply font-heading font-black tracking-tight;
+  }
+
+  .hero-title-animate {
+    animation: heroTitleSweep 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .hero-title-glow {
+    color: currentColor;
+    animation: heroGlowShift 2.6s ease-in-out infinite;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 0 10px rgba(255, 255, 255, 0.25);
+  }
+}
+
+@keyframes heroTitleSweep {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+    letter-spacing: 0.03em;
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: -0.01em;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes heroGlowShift {
+  0% {
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35),
+      0 0 10px rgba(255, 255, 255, 0.25),
+      -6px 0 18px rgba(255, 255, 255, 0.12);
+  }
+  50% {
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35),
+      0 0 16px rgba(255, 255, 255, 0.45),
+      6px 0 22px rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35),
+      0 0 10px rgba(255, 255, 255, 0.25),
+      -6px 0 18px rgba(255, 255, 255, 0.12);
   }
 }
 

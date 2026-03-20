@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Star, Users, Globe, TrendingUp, Search, MapPin, Briefcase, Award } from 'lucide-react';
 import { contentAPI, jobsAPI } from '../services/api';
 import JobCard from '../components/JobCard';
+import CountUp from '../components/CountUp';
 // Sector Images (LOCAL)
 import itImg from '../asserts/IT&Technology.webp';
 import healthcareImg from '../asserts/Healthcare.webp';
@@ -74,7 +75,7 @@ const CandidateHome = () => {
     <main className="min-h-screen bg-white">
       {/* ── Premium Hero ── */}
       <section
-        className="relative min-h-[90vh] flex items-center pt-32"
+        className="relative min-h-screen flex items-center pt-32 pb-12"
         style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
         {/* Dark overlay for readability */}
@@ -82,15 +83,15 @@ const CandidateHome = () => {
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
           {/* Main Content */}
-          <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.15 } } }} className="grid lg:grid-cols-2 gap-16 items-center">
+          <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.15 } } }} className="grid lg:grid-cols-2 gap-10 items-center">
             {/* Left Column */}
             <div>
               <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="mb-8">
                 <div className="inline-flex items-center gap-2 bg-white/15 border border-white/30 px-4 py-2 mb-6 rounded backdrop-blur-sm">
                   <TrendingUp className="w-4 h-4 text-white" />
-                  <span className="text-xs font-display font-bold text-white tracking-wide">PREMIER RECRUITMENT SERVICES</span>
+                  <span className="hero-kicker text-white">PREMIER RECRUITMENT SERVICES</span>
                 </div>
-                <h1 className="font-display font-black text-6xl lg:text-7xl leading-[1.1] text-white mb-6 drop-shadow-lg">
+                <h1 className="hero-title hero-title-animate hero-title-glow text-6xl lg:text-7xl leading-[1.1] text-white mb-6 drop-shadow-lg">
                   Accelerate Your <br />
                   <span className="relative">
                     Career Growth
@@ -103,19 +104,23 @@ const CandidateHome = () => {
               </motion.div>
 
               {/* Stats Mini */}
-              <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="flex gap-8 mt-10">
-                <div>
-                  <p className="font-display font-black text-3xl text-white">10K+</p>
+              <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="flex flex-wrap gap-4 mt-10">
+                <div className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 backdrop-blur-sm">
+                  <p className="font-display font-black text-3xl text-white">
+                    <CountUp value={10000} format="compact" suffix="+" />
+                  </p>
                   <p className="text-xs text-white/60 font-body mt-1">Placements</p>
                 </div>
-                <div className="w-px bg-white/20" />
-                <div>
-                  <p className="font-display font-black text-3xl text-white">500+</p>
+                <div className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 backdrop-blur-sm">
+                  <p className="font-display font-black text-3xl text-white">
+                    <CountUp value={500} format="plain" suffix="+" />
+                  </p>
                   <p className="text-xs text-white/60 font-body mt-1">Clients</p>
                 </div>
-                <div className="w-px bg-white/20" />
-                <div>
-                  <p className="font-display font-black text-3xl text-white">1.2K+</p>
+                <div className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 backdrop-blur-sm">
+                  <p className="font-display font-black text-3xl text-white">
+                    <CountUp value={1200} format="compact" decimals={1} suffix="+" />
+                  </p>
                   <p className="text-xs text-white/60 font-body mt-1">Active Roles</p>
                 </div>
               </motion.div>
@@ -123,7 +128,7 @@ const CandidateHome = () => {
 
             {/* Right Column - Premium Search Card */}
             <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { delay: 0.3 } } }}>
-              <div className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-10 border border-black/5">
+              <div className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-8 lg:p-10 border border-black/5 max-w-[480px] ml-auto">
                 <h3 className="font-heading font-semibold text-black text-lg mb-8">Find Your Perfect Role</h3>
                 <form onSubmit={handleSearch} className="space-y-5">
                   {/* Job Search */}
@@ -286,7 +291,7 @@ const CandidateHome = () => {
               <h2 className="section-title">
                 Featured <span className="text-black">Opportunities</span>
               </h2>
-              <div className="accent-line mt-4" />
+              {/* <div className="accent-line mt-4" /> */}
             </div>
             <Link to="/jobs" className="btn-outline text-sm">View All <ArrowRight className="w-4 h-4" /></Link>
           </motion.div>
