@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('health/', views.HealthCheckView.as_view(), name='health'),
+    path('blog-public/<path:resource>', views.PublicBlogProxyView.as_view(), name='public-blog-proxy'),
 
     # ── Auth ──────────────────────────────────────────────────────────────────
     path('login/', views.LoginView.as_view(), name='login'),

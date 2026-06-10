@@ -14,6 +14,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import authenticate, get_user_model
 from django.conf import settings
+from django.http import HttpResponse
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 from .models import Job, CandidateApplication, Testimonial, CareerAdvice, EmployerEnquiry
 from .serializers import (
@@ -32,6 +35,66 @@ class HealthCheckView(APIView):
 
     def get(self, request):
         return Response({'status': 'ok'})
+
+class PublicBlogProxyView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+    throttle_classes = []
+
+    upstream_base_url = 'https://blog-gpizm.ondigitalocean.app/api/v1/public'
+
+    def forward(self, request, resource):
+        if not resource.startswith('websites/'):
+            return Response(
+                {'success': False, 'message': 'Invalid blog resource.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        query_string = request.META.get('QUERY_STRING', '')
+        upstream_url = f'{self.upstream_base_url}/{resource}'
+        if query_string:
+            upstream_url = f'{upstream_url}?{query_string}'
+
+        body = request.body if request.method == 'POST' else None
+        headers = {
+            'Accept': 'application/json',
+            'User-Agent': 'OptimusGlobalManpower/1.0',
+        }
+        content_type = request.headers.get('Content-Type')
+        if content_type:
+            headers['Content-Type'] = content_type
+
+        upstream_request = Request(
+            upstream_url,
+            data=body,
+            headers=headers,
+            method=request.method,
+        )
+
+        try:
+            with urlopen(upstream_request, timeout=20) as upstream_response:
+                return HttpResponse(
+                    upstream_response.read(),
+                    status=upstream_response.status,
+                    content_type=upstream_response.headers.get('Content-Type', 'application/json'),
+                )
+        except HTTPError as error:
+            return HttpResponse(
+                error.read(),
+                status=error.code,
+                content_type=error.headers.get('Content-Type', 'application/json'),
+            )
+        except (URLError, TimeoutError):
+            return Response(
+                {'success': False, 'message': 'Blog service is temporarily unavailable.'},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
+
+    def get(self, request, resource):
+        return self.forward(request, resource)
+
+    def post(self, request, resource):
+        return self.forward(request, resource)
 
 # ── Permissions ───────────────────────────────────────────────────────────────
 
