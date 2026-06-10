@@ -19,6 +19,11 @@ export default defineConfig(({ mode }) => {
           target: proxyTarget,
           changeOrigin: true,
         },
+        '/blog-api': {
+          target: 'https://blog-gpizm.ondigitalocean.app',
+          changeOrigin: true,
+          rewrite: (path: string) => path.replace(/^\/blog-api/, '/api/v1/public'),
+        },
       }
     : undefined
 
