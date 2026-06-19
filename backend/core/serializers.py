@@ -58,6 +58,9 @@ class CandidateApplicationSerializer(serializers.ModelSerializer):
 
 
 class CandidateApplicationCreateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False, allow_blank=True)
+    full_name = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
     class Meta:
         model = CandidateApplication
         exclude = ['status']
@@ -75,6 +78,14 @@ class CandidateApplicationCreateSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        full_name = attrs.pop('full_name', '').strip()
+        name = attrs.get('name', '').strip()
+        if not name and full_name:
+            attrs['name'] = full_name
+            name = full_name
+        if not name:
+            raise serializers.ValidationError({'name': 'This field is required.'})
+
         job = attrs.get('job')
         email = attrs.get('email')
         if job and email and CandidateApplication.objects.filter(email=email, job=job).exists():

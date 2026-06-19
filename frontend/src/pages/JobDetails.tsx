@@ -20,6 +20,20 @@ import {
 
 const EXP_YEARS = ['< 1 year', '1 year', '2 years', '3 years', '4 years', '5 years', '6-8 years', '8-10 years', '10+ years'];
 
+const formatApiError = (data: any) => {
+  if (!data) return '';
+  if (typeof data === 'string') return data;
+  if (data.detail) return data.detail;
+  if (Array.isArray(data.non_field_errors) && data.non_field_errors[0]) return data.non_field_errors[0];
+
+  return Object.entries(data)
+    .map(([field, value]) => {
+      const message = Array.isArray(value) ? value.join(' ') : String(value);
+      return `${field}: ${message}`;
+    })
+    .join(' ');
+};
+
 const JobDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [applyModal, setApplyModal] = useState(false);
@@ -148,13 +162,11 @@ const JobDetails = () => {
       fd.append('resume', cvFile);
       fd.append('subject', 'Job application');
       
-      // Append form fields - map 'name' to 'full_name'
       Object.entries(payload).forEach(([k, v]) => {
-        const key = k === 'name' ? 'full_name' : k;
         if (typeof v === 'boolean') {
-           fd.append(key, v ? 'True' : 'False');
+           fd.append(k, v ? 'True' : 'False');
         } else {
-           fd.append(key, v);
+           fd.append(k, v);
         }
       });
       
@@ -167,11 +179,11 @@ const JobDetails = () => {
       setCvFile(null);
       setExperienceSelected(false);
     } catch (err: any) {
-      const detail = err.response?.data?.detail || err.response?.data?.non_field_errors?.[0];
+      const detail = formatApiError(err.response?.data);
       if (detail?.toLowerCase().includes('already exists')) {
         setSubmitted(true); // treat already-applied as submitted too
       } else {
-        setError(detail || Object.values(err.response?.data || {}).flat().join(' ') || 'Failed to submit. Please try again.');
+        setError(detail || 'Failed to submit. Please try again.');
       }
     } finally {
       setSubmitting(false);
