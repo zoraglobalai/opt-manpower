@@ -213,7 +213,14 @@ class ApplyJobView(APIView):
     def post(self, request):
         serializer = CandidateApplicationCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            application = serializer.save()
+            try:
+                application = serializer.save()
+            except Exception:
+                return Response(
+                    {'detail': 'Unable to save application right now. Please try again later.'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
             try:
                 send_application_confirmation(
                     application.email,

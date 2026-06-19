@@ -129,6 +129,8 @@ if os.getenv('USE_S3') == '1':
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
     MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'
+elif os.getenv('VERCEL') == '1':
+    MEDIA_ROOT = Path('/tmp') / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
