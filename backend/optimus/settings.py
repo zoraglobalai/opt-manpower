@@ -25,6 +25,18 @@ DEBUG = os.getenv('DEBUG', '0') == '1'
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()]
 
+if os.getenv('VERCEL') == '1':
+    ALLOWED_HOSTS.append('.vercel.app')
+
+for vercel_host in (
+    os.getenv('VERCEL_URL'),
+    os.getenv('VERCEL_PROJECT_PRODUCTION_URL'),
+):
+    if vercel_host:
+        ALLOWED_HOSTS.append(vercel_host.replace('https://', '').replace('http://', '').strip('/'))
+
+ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -157,6 +169,11 @@ if _cors_origins:
     CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()]
 else:
     CORS_ALLOW_ALL_ORIGINS = DEBUG  # allow all only in dev
+
+if os.getenv('VERCEL') == '1':
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r'^https://.*\.vercel\.app$',
+    ]
 
 CORS_ALLOW_CREDENTIALS = True
 

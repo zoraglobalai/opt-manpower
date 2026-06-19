@@ -5,7 +5,7 @@ export const PUBLIC_WEBSITE_ID =
   import.meta.env.VITE_PUBLIC_WEBSITE_ID ?? '4';
 
 const BLOG_ADMIN_DEV_PROXY_URL = '/blog-api';
-const BLOG_ADMIN_PRODUCTION_PROXY_URL = '/api/blog-public';
+const BLOG_ADMIN_PRODUCTION_PROXY_URL = 'https://opt-manpower-17vd.vercel.app/api/blog-public';
 
 export const API_BASE_URL = import.meta.env.DEV
   ? BLOG_ADMIN_DEV_PROXY_URL

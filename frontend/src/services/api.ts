@@ -3,7 +3,7 @@ import axios from 'axios';
 const BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ||
   import.meta.env.VITE_API_URL ||
-  '/api'
+  'https://opt-manpower-17vd.vercel.app/api'
 ).replace(/\/+$/, '');
 
 const api = axios.create({ baseURL: BASE_URL });
